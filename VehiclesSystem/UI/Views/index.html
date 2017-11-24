@@ -1,0 +1,45 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" >
+    <meta name="author" >
+
+    <title>Index</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../Libs/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <script src="../Libs/jquery-3.2.1.min.js"></script>
+</head>
+
+<body style="background-color:#eee">
+
+    <div class="container" id="container">
+        <div id="login">
+            <form class="form-signin" style="max-width:330px; padding:15px; margin:0 auto">
+                <h2 class="form-signin-heading">Sign in as..</h2>
+                <button id="admin" class="btn btn-lg btn-primary btn-block">Admin</button>
+                <label style="width:100%;text-align:center">Or</label>
+                <button id="register" class="btn btn-lg btn-primary btn-block">User</button>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            $('#admin').click(function () {
+                $('#login').remove();
+                $('#container').load('Admin.html');
+            });
+
+            $('#register').click(function () {
+                $('#login').remove();
+                $('#container').load('RegisterUser.html');
+            });
+
+            
+        });
+    </script>
+</body>
+</html>

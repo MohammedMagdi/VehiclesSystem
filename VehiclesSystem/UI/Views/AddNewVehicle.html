@@ -1,0 +1,86 @@
+﻿<div id="addVehicle">
+    <form id="formaddVehicle" class="form-signin" style="max-width:700px; padding:15px; margin:0 auto">
+        <h2 class="form-signin-heading">Add new vehicle</h2>
+
+        <label for="inputPlateNumber" class="sr-only">Plate Number</label>
+        <input type="number" min="1" id="inputPlateNumber" class="form-control" placeholder="Plate Number" required autofocus style="margin-top:2px">
+
+        <h5 style="margin-top:2px">Plate contain text</h5>
+        <input type="radio" name="isText" value="yes" checked onclick="radioClicked(true)"> Yes<br>
+        <input type="radio" name="isText" value="no" onclick="radioClicked(false)"> No<br>
+
+        <label for="inputPlateText" class="sr-only">Plate Text</label>
+        <input type="text" id="inputPlateText" class="form-control" placeholder="Plate Text" required>
+
+        <label for="inputPlateModel" class="sr-only">Plate Model</label>
+        <input type="text" id="inputPlateModel" class="form-control" placeholder="Plate Model" required style="margin-top:2px">
+
+        <label for="inputPlateColor" class="sr-only">Plate Color</label>
+        <input type="text" id="inputPlateColor" class="form-control" placeholder="Plate Color" required style="margin-top:2px">
+
+        <button id="submitAdd" type="submit" class="btn btn-lg btn-primary btn-block" style="margin-top:20px">Submit</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    function radioClicked(Value) {
+        if (Value) {
+            $("#inputPlateText").prop('disabled', false);
+            $("#inputPlateText").prop('required', true);
+        }
+        else if (!Value) {
+            $("#inputPlateText").val("");
+            $("#inputPlateText").prop('disabled', true);
+            $("#inputPlateText").prop('required', false);
+            
+        }
+    }
+
+    $(document).ready(function () {
+        $("#formaddVehicle").on('submit', function (e) {
+            $("#submitAdd").prop('disabled', true);
+            e.preventDefault();
+            var plateNumber = document.getElementById("inputPlateNumber").value;
+            var plateText = document.getElementById("inputPlateText").value;
+            var plateModel = document.getElementById("inputPlateModel").value;
+            var plateColor = document.getElementById("inputPlateColor").value;
+
+            var userId = window.userId;
+            
+            var QueryParameter = "?PlateNumber=" + plateNumber + "&PlateText=" + plateText + "&PlateModel=" + plateModel + "&PlateColor=" + plateColor + "&UserId=" + userId;
+            sendData(QueryParameter);
+            
+        });
+
+        function sendData(QueryParameter) {
+            $.ajax({
+                url: '/api/Vehicles' + QueryParameter,
+                type: 'POST',
+                dataType: "json",
+                success: function (data, textStatus, xhr) {
+                    console.log(data);
+                    alert(data.Msg);
+                    $("#submitAdd").prop('disabled', false);
+                    if (data.Msg == "success"){
+                        ClearData();
+                    }
+                    
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(xhr);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+
+            });
+        }
+
+        function ClearData() {
+            $("#inputPlateNumber").val("");
+            $("#inputPlateText").val("");
+            $("#inputPlateModel").val("");
+            $("#inputPlateColor").val("");
+        }
+    });
+
+</script>

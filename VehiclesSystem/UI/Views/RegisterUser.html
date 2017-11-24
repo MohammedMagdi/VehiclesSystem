@@ -1,0 +1,64 @@
+﻿
+<div id="registerForm">
+    <form id="formregister" class="form-signin" style="max-width:500px; padding:15px; margin:0 auto">
+        <h2 class="form-signin-heading">Register new user</h2>
+
+        <label for="inputFirstName" class="sr-only">First Name</label>
+        <input type="text" id="inputFirstName" class="form-control" placeholder="First Name" required autofocus style="margin-top:2px">
+
+        <label for="inputLastName" class="sr-only">Last Name</label>
+        <input type="text" id="inputLastName" class="form-control" placeholder="Last Name" required style="margin-top:2px">
+
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required style="margin-top:2px">
+
+        <label for="inputAge" class="sr-only">Age</label>
+        <input type="number" min="1" max="100" id="inputAge" class="form-control" placeholder="Age" required style="margin-top:2px">
+
+        <label for="inputMobileNumber" class="sr-only">Mobile Number</label>
+        <input type="number" min="0" max="99999999999" id="inputMobileNumber" class="form-control" placeholder="Mobile Number" required style="margin-top:2px">
+
+        <button id="register" type="submit" class="btn btn-lg btn-primary btn-block" style="margin-top:20px">Register</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#formregister").on('submit', function (e) {
+            $("#register").prop('disabled', true);
+            e.preventDefault();
+            var FirstName = document.getElementById("inputFirstName").value;
+            var LastName = document.getElementById("inputLastName").value;
+            var Email = document.getElementById("inputEmail").value;
+            var Age = document.getElementById("inputAge").value;
+            var MobileNumber = document.getElementById("inputMobileNumber").value;
+           
+            var QueryParameter = "?firstName=" +  FirstName + "&lastName=" + LastName + "&email=" + Email + "&age=" + Age + "&mobileNumber=" + MobileNumber;
+            sendData(QueryParameter);
+
+        });
+
+        function sendData(QueryParameter) {
+            $.ajax({
+                url: '/api/User' + QueryParameter,
+                type: 'POST',
+                dataType: "json",
+                success: function (data, textStatus, xhr) {
+                    alert(data.Msg);
+                    if (data.Msg == "success"){
+                        $('#registerForm').remove();
+                        window.userId = data.UserId;
+                        $('#container').load('AddNewVehicle.html');
+                    }
+                    $("#register").prop('disabled', false);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(xhr);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                }
+
+            });
+        }
+    });
+</script>
