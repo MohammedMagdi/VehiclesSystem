@@ -48,15 +48,19 @@
             var userId = window.userId;
             
             var QueryParameter = "?PlateNumber=" + plateNumber + "&PlateText=" + plateText + "&PlateModel=" + plateModel + "&PlateColor=" + plateColor + "&UserId=" + userId;
-            sendData(QueryParameter);
+            var vehicle = { "PlateNumber": plateNumber, "PlateText": plateText, "PlateModel": plateModel, "PlateColor": plateColor };
+            var model = { vehicle, UserId: userId };
+            sendData(model);
             
         });
 
-        function sendData(QueryParameter) {
+        function sendData(model) {
+            
             $.ajax({
-                url: '/api/Vehicles' + QueryParameter,
+                url: '/vehicles/addnew',
                 type: 'POST',
-                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(model) ,
                 success: function (data, textStatus, xhr) {
                     console.log(data);
                     alert(data.Msg);

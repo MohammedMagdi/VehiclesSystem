@@ -13,7 +13,7 @@
     getData();
     function getData() {
         $.ajax({
-            url: '/api/Vehicles',
+            url: '/vehicles/getNewVehicles',
             type: 'POST',
             dataType: "json",
             success: function (data, textStatus, xhr) {
@@ -61,7 +61,7 @@
         $(".btn").prop('disabled', true);
         
         $.ajax({
-            url: '/api/Vehicles?Id=' + Id,
+            url: '/vehicles/approve?Id=' + Id,
             type: 'POST',
             dataType: "json",
             success: function (data, textStatus, xhr) {
@@ -83,7 +83,7 @@
     function rejectRequest(Id) {
         $(".btn").prop('disabled', true);
         $.ajax({
-            url: '/api/Vehicles?Id=' + Id,
+            url: '/vehicles/reject?Id=' + Id,
             type: 'DELETE',
             dataType: "json",
             success: function (data, textStatus, xhr) {

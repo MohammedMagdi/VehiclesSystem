@@ -33,16 +33,17 @@
             var Age = document.getElementById("inputAge").value;
             var MobileNumber = document.getElementById("inputMobileNumber").value;
            
-            var QueryParameter = "?firstName=" +  FirstName + "&lastName=" + LastName + "&email=" + Email + "&age=" + Age + "&mobileNumber=" + MobileNumber;
-            sendData(QueryParameter);
+            var user = { firstName: FirstName, lastName: LastName, email: Email, age: Age, mobileNumber: MobileNumber };
+            sendData(user);
 
         });
 
-        function sendData(QueryParameter) {
+        function sendData(user) {
             $.ajax({
-                url: '/api/User' + QueryParameter,
+                url: '/users/register',
                 type: 'POST',
                 dataType: "json",
+                data: user,
                 success: function (data, textStatus, xhr) {
                     alert(data.Msg);
                     if (data.Msg == "success"){

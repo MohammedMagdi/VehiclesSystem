@@ -11,18 +11,26 @@ namespace VehiclesSystem.Controllers
 {
     public class VehiclesController : ApiController
     {
-        // POST api/<controller> add new vehicle
+        // POST /vehicles/addnew
+        [Route("vehicles/addnew")]
         [HttpPost]
-        public Response AddVehicle(int PlateNumber, string PlateText, string PlateModel, string PlateColor, int UserId)
+        public Response AddVehicle(dynamic model)
         {
             Manager manager = new Manager();
+            
+            int PlateNumber = model.vehicle.PlateNumber;
+            string PlateText = model.vehicle.PlateText;
+            string PlateModel = model.vehicle.PlateModel;
+            string PlateColor = model.vehicle.PlateText;
+            int UserId = model.UserId;
 
             Response response = new Response();
             response = manager.AddNewVehicle(PlateNumber, PlateText, PlateModel, PlateColor, UserId);
             return response;
         }
 
-        // POST api/<controller> get all Vehicles
+        // POST /vehicles/addnew
+        [Route("vehicles/getNewVehicles")]
         [HttpPost]
         public Response GetNewVehicles()
         {
@@ -33,7 +41,8 @@ namespace VehiclesSystem.Controllers
             return response;
         }
 
-        // POST api/<controller> Approve Vehicle
+        // POST /vehicles/addnew
+        [Route("vehicles/approve")]
         [HttpPost]
         public Response ApproveVehicle(int Id)
         {
@@ -44,7 +53,8 @@ namespace VehiclesSystem.Controllers
             return response;
         }
 
-        // DELET api/<controller> reject Vehicle
+        // POST /vehicles/addnew
+        [Route("vehicles/reject")]
         [HttpDelete]
         public Response RejectVehicle(int Id)
         {

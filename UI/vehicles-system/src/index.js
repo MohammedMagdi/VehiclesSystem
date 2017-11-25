@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../src/styles/bootstrap.css';
 import './styles/index.css';
-import AdminLogin from './AdminLogin';
+import UserLogin from './UserLogin';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<AdminLogin />, document.getElementById('root'));
+ReactDOM.render(<UserLogin />, document.getElementById('root'));
 registerServiceWorker();

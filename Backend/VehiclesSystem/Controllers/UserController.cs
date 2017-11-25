@@ -11,18 +11,20 @@ namespace VehiclesSystem.Controllers
 {
     public class UserController : ApiController
     {
-        // POST api/<controller> add new user
+        // POST /users/register
+        [Route("users/register")]
         [HttpPost]
-        public Response AddUser(string firstName , string lastName , string email , byte age , string mobileNumber )
+        public Response AddUser(User user)
         {
             Manager manager = new Manager();
 
             Response response = new Response();
-            response = manager.CreateUser( firstName, lastName, email, age, mobileNumber);
+            response = manager.CreateUser( user.FirstName, user.LastName,user.Email, user.Age, user.MobileNumber);
             return response;
         }
 
-        // POST api/<controller> get all users
+        // POST /users
+        [Route("users")]
         [HttpPost]
         public Response GetAllUsers()
         {

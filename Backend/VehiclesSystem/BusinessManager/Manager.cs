@@ -159,7 +159,8 @@ namespace VehiclesSystem.BusinessManager
             string mailBodyhtml =
             "<p>from user: "+firstName + " " + lastName +" Email: "+email+ "</p>";
             mailBodyhtml += "<p> vehicle info: Plate number: "+plateNumber+" Plate Text: "+plateText+" Plate Color: " + plateColor + " Plate Model: " + plateModel+"</p>";
-            var msg = new MailMessage("mohammed.magdi.test@gmail.com", "m.hassan@ntgclarity.com", "New Vehicle was added", mailBodyhtml);
+            //m.hassan@ntgclarity.com
+            var msg = new MailMessage("mohammed.magdi.test@gmail.com", "dev.mmagdi@gmail.com", "New Vehicle was added", mailBodyhtml);
             msg.To.Add("dev.mmagdi@gmail.com");
             msg.IsBodyHtml = true;
             var smtpClient = new SmtpClient("smtp.gmail.com", 587); 
