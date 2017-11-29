@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="VehiclesSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="VehiclesSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="PlateText">
           <Key>
             <PropertyRef Name="Id" />
@@ -20,6 +20,7 @@
           <Property Name="FirstName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="LastName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Email" Type="varchar" MaxLength="320" Nullable="false" />
+          <Property Name="Password" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Age" Type="tinyint" Nullable="false" />
           <Property Name="MobileNumber" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
@@ -72,30 +73,43 @@
             <End Role="Vehicle" EntitySet="Vehicle" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="VehiclesSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="VehiclesSystemEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="PlateTexts" EntityType="VehiclesSystemModel.PlateText" />
+          <EntitySet Name="Users" EntityType="VehiclesSystemModel.User" />
+          <EntitySet Name="Vehicles" EntityType="VehiclesSystemModel.Vehicle" />
+          <AssociationSet Name="FK_Vehicle_PlateText" Association="VehiclesSystemModel.FK_Vehicle_PlateText">
+            <End Role="PlateText" EntitySet="PlateTexts" />
+            <End Role="Vehicle" EntitySet="Vehicles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Vehicle_User" Association="VehiclesSystemModel.FK_Vehicle_User">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Vehicle" EntitySet="Vehicles" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="PlateText">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Text" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <NavigationProperty Name="Vehicles" Relationship="Self.FK_Vehicle_PlateText" FromRole="PlateText" ToRole="Vehicle" />
+          <Property Name="Text" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Vehicles" Relationship="VehiclesSystemModel.FK_Vehicle_PlateText" FromRole="PlateText" ToRole="Vehicle" />
         </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Email" Type="String" MaxLength="320" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="320" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="Age" Type="Byte" Nullable="false" />
-          <Property Name="MobileNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <NavigationProperty Name="Vehicles" Relationship="Self.FK_Vehicle_User" FromRole="User" ToRole="Vehicle" />
+          <Property Name="MobileNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Vehicles" Relationship="VehiclesSystemModel.FK_Vehicle_User" FromRole="User" ToRole="Vehicle" />
         </EntityType>
         <EntityType Name="Vehicle">
           <Key>
@@ -104,16 +118,16 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="PlateNumber" Type="Int32" Nullable="false" />
           <Property Name="PlateTextId" Type="Int32" />
-          <Property Name="PlateModel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="PlateColor" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PlateModel" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PlateColor" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="UserId" Type="Int32" Nullable="false" />
           <Property Name="WaitingForApprove" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="PlateText" Relationship="Self.FK_Vehicle_PlateText" FromRole="Vehicle" ToRole="PlateText" />
-          <NavigationProperty Name="User" Relationship="Self.FK_Vehicle_User" FromRole="Vehicle" ToRole="User" />
+          <NavigationProperty Name="PlateText" Relationship="VehiclesSystemModel.FK_Vehicle_PlateText" FromRole="Vehicle" ToRole="PlateText" />
+          <NavigationProperty Name="User" Relationship="VehiclesSystemModel.FK_Vehicle_User" FromRole="Vehicle" ToRole="User" />
         </EntityType>
         <Association Name="FK_Vehicle_PlateText">
-          <End Role="PlateText" Type="Self.PlateText" Multiplicity="0..1" />
-          <End Role="Vehicle" Type="Self.Vehicle" Multiplicity="*" />
+          <End Type="VehiclesSystemModel.PlateText" Role="PlateText" Multiplicity="0..1" />
+          <End Type="VehiclesSystemModel.Vehicle" Role="Vehicle" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="PlateText">
               <PropertyRef Name="Id" />
@@ -124,8 +138,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Vehicle_User">
-          <End Role="User" Type="Self.User" Multiplicity="1" />
-          <End Role="Vehicle" Type="Self.Vehicle" Multiplicity="*" />
+          <End Type="VehiclesSystemModel.User" Role="User" Multiplicity="1" />
+          <End Type="VehiclesSystemModel.Vehicle" Role="Vehicle" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="User">
               <PropertyRef Name="Id" />
@@ -135,19 +149,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="VehiclesSystemEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="PlateTexts" EntityType="Self.PlateText" />
-          <EntitySet Name="Users" EntityType="Self.User" />
-          <EntitySet Name="Vehicles" EntityType="Self.Vehicle" />
-          <AssociationSet Name="FK_Vehicle_PlateText" Association="Self.FK_Vehicle_PlateText">
-            <End Role="PlateText" EntitySet="PlateTexts" />
-            <End Role="Vehicle" EntitySet="Vehicles" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Vehicle_User" Association="Self.FK_Vehicle_User">
-            <End Role="User" EntitySet="Users" />
-            <End Role="Vehicle" EntitySet="Vehicles" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -157,33 +158,34 @@
           <EntitySetMapping Name="PlateTexts">
             <EntityTypeMapping TypeName="VehiclesSystemModel.PlateText">
               <MappingFragment StoreEntitySet="PlateText">
-                <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="VehiclesSystemModel.User">
               <MappingFragment StoreEntitySet="User">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
-                <ScalarProperty Name="LastName" ColumnName="LastName" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Age" ColumnName="Age" />
                 <ScalarProperty Name="MobileNumber" ColumnName="MobileNumber" />
+                <ScalarProperty Name="Age" ColumnName="Age" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Vehicles">
             <EntityTypeMapping TypeName="VehiclesSystemModel.Vehicle">
               <MappingFragment StoreEntitySet="Vehicle">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="PlateNumber" ColumnName="PlateNumber" />
-                <ScalarProperty Name="PlateTextId" ColumnName="PlateTextId" />
-                <ScalarProperty Name="PlateModel" ColumnName="PlateModel" />
-                <ScalarProperty Name="PlateColor" ColumnName="PlateColor" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="WaitingForApprove" ColumnName="WaitingForApprove" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="PlateColor" ColumnName="PlateColor" />
+                <ScalarProperty Name="PlateModel" ColumnName="PlateModel" />
+                <ScalarProperty Name="PlateTextId" ColumnName="PlateTextId" />
+                <ScalarProperty Name="PlateNumber" ColumnName="PlateNumber" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

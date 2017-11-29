@@ -11,7 +11,7 @@ namespace VehiclesSystem.Controllers
 {
     public class UserController : ApiController
     {
-        // POST /users/register
+        #region POST /users/register
         [Route("users/register")]
         [HttpPost]
         public Response AddUser(User user)
@@ -19,11 +19,27 @@ namespace VehiclesSystem.Controllers
             Manager manager = new Manager();
 
             Response response = new Response();
-            response = manager.CreateUser( user.FirstName, user.LastName,user.Email, user.Age, user.MobileNumber);
+            response = manager.CreateUser(user.FirstName, user.LastName, user.Email, user.Password, user.Age, user.MobileNumber);
             return response;
         }
+        #endregion
 
-        // POST /users
+
+        #region POST /users/login
+        [Route("users/login")]
+        [HttpPost]
+        public Response UserLogin(User user)
+        {
+            Manager manager = new Manager();
+
+            Response response = new Response();
+            response = manager.UserLogin(user.Email, user.Password);
+            return response;
+        }
+        #endregion
+
+
+        #region POST /users
         [Route("users")]
         [HttpPost]
         public Response GetAllUsers()
@@ -34,6 +50,7 @@ namespace VehiclesSystem.Controllers
             response = manager.GetUsers();
             return response;
         }
+        #endregion
 
 
     }

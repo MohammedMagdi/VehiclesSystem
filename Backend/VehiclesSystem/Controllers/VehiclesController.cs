@@ -11,25 +11,25 @@ namespace VehiclesSystem.Controllers
 {
     public class VehiclesController : ApiController
     {
-        // POST /vehicles/addnew
+        #region POST /vehicles/addnew
         [Route("vehicles/addnew")]
         [HttpPost]
-        public Response AddVehicle(dynamic model)
+        public Response AddVehicle(Response model)
         {
             Manager manager = new Manager();
-            
-            int PlateNumber = model.vehicle.PlateNumber;
-            string PlateText = model.vehicle.PlateText;
-            string PlateModel = model.vehicle.PlateModel;
-            string PlateColor = model.vehicle.PlateText;
-            int UserId = model.UserId;
 
             Response response = new Response();
-            response = manager.AddNewVehicle(PlateNumber, PlateText, PlateModel, PlateColor, UserId);
+            response = manager.AddNewVehicle(model.Vehicles[0].PlateNumber
+                , model.Vehicles[0].PlateText
+                , model.Vehicles[0].PlateModel
+                , model.Vehicles[0].PlateColor
+                , model.UserId);
             return response;
         }
+        #endregion
 
-        // POST /vehicles/addnew
+
+        #region  POST /vehicles/getNewVehicles
         [Route("vehicles/getNewVehicles")]
         [HttpPost]
         public Response GetNewVehicles()
@@ -40,29 +40,34 @@ namespace VehiclesSystem.Controllers
             response = manager.GetNewVehicles();
             return response;
         }
+        #endregion
 
-        // POST /vehicles/addnew
+
+        #region POST /vehicles/approve
         [Route("vehicles/approve")]
         [HttpPost]
-        public Response ApproveVehicle(int Id)
+        public Response ApproveVehicle(Response model)
         {
             Manager manager = new Manager();
 
             Response response = new Response();
-            response = manager.ApproveVehicle(Id);
+            response = manager.ApproveVehicle(model.VehicleId);
             return response;
         }
+        #endregion
 
-        // POST /vehicles/addnew
+
+        #region POST /vehicles/reject
         [Route("vehicles/reject")]
-        [HttpDelete]
-        public Response RejectVehicle(int Id)
+        [HttpPost]
+        public Response RejectVehicle(Response model)
         {
             Manager manager = new Manager();
 
             Response response = new Response();
-            response = manager.RejectVehicle(Id);
+            response = manager.RejectVehicle(model.VehicleId);
             return response;
         }
+        #endregion
     }
 }

@@ -12,27 +12,31 @@ namespace VehiclesSystem.BusinessManager
     public class Manager
     {
         #region Create new user
-        public Response CreateUser(string firstName, string lastName, string email, byte age, string mobileNumber)
+        public Response CreateUser(string firstName, string lastName, string email, string password, byte age, string mobileNumber)
         {
+            int? AGE = age;
             Response response = new Response();
             if (firstName == "" || firstName == null)
             {
                 response.Msg = "fail, first name required";
             }
-            if (lastName == "" || lastName == null)
+            else if (lastName == "" || lastName == null)
             {
                 response.Msg = "fail, last name required";
             }
-            if (email == "" || email == null)
+            else if (email == "" || email == null)
             {
                 response.Msg = "fail, email required";
             }
-            int? AGE = age;
-            if (!AGE.HasValue)
+            else if (password == "" || password == null)
+            {
+                response.Msg = "fail, password required";
+            }
+            else if (!AGE.HasValue)
             {
                 response.Msg = "fail, aged required";
             }
-            if (mobileNumber == "" || mobileNumber == null)
+            else if (mobileNumber == "" || mobileNumber == null)
             {
                 response.Msg = "fail, mobile number required";
             }
@@ -47,13 +51,13 @@ namespace VehiclesSystem.BusinessManager
                             FirstName = firstName,
                             LastName = lastName,
                             Email = email,
+                            Password = password,
                             Age = age,
                             MobileNumber = mobileNumber
                         };
                         db.Users.Add(user);
                         db.SaveChanges();
-                        int id = user.Id;
-                        response.UserId = id;
+                        response.UserId = user.Id;
                         response.Msg = "success";
                     }
                 }
@@ -61,7 +65,7 @@ namespace VehiclesSystem.BusinessManager
                 {
                     response.Msg = "failed!, Email is exist";
                 }
-                
+
             }
             return response;
 
@@ -147,7 +151,7 @@ namespace VehiclesSystem.BusinessManager
                                     where u.Id == userId
                                     select u).FirstOrDefault();
 
-                    SendEmail(plateNumber, plateText, plateColor, plateModel, UserInfo.FirstName,UserInfo.LastName,UserInfo.MobileNumber, UserInfo.Email, UserInfo.Age);
+                    //SendEmail(plateNumber, plateText, plateColor, plateModel, UserInfo.FirstName,UserInfo.LastName,UserInfo.MobileNumber, UserInfo.Email, UserInfo.Age);
                 }
             }
             return response;
@@ -157,13 +161,12 @@ namespace VehiclesSystem.BusinessManager
         private void SendEmail(int plateNumber, string plateText, string plateColor, string plateModel, string firstName, string lastName, string mobileNumber, string email, byte age)
         {
             string mailBodyhtml =
-            "<p>from user: "+firstName + " " + lastName +" Email: "+email+ "</p>";
-            mailBodyhtml += "<p> vehicle info: Plate number: "+plateNumber+" Plate Text: "+plateText+" Plate Color: " + plateColor + " Plate Model: " + plateModel+"</p>";
-            //m.hassan@ntgclarity.com
+            "<p>from user: " + firstName + " " + lastName + " Email: " + email + "</p>";
+            mailBodyhtml += "<p> vehicle info: Plate number: " + plateNumber + " Plate Text: " + plateText + " Plate Color: " + plateColor + " Plate Model: " + plateModel + "</p>";
             var msg = new MailMessage("mohammed.magdi.test@gmail.com", "dev.mmagdi@gmail.com", "New Vehicle was added", mailBodyhtml);
             msg.To.Add("dev.mmagdi@gmail.com");
             msg.IsBodyHtml = true;
-            var smtpClient = new SmtpClient("smtp.gmail.com", 587); 
+            var smtpClient = new SmtpClient("smtp.gmail.com", 587);
             smtpClient.UseDefaultCredentials = true;
             smtpClient.Credentials = new NetworkCredential("mohammed.magdi.test@gmail.com", "test123456789");
             smtpClient.EnableSsl = true;
@@ -171,6 +174,32 @@ namespace VehiclesSystem.BusinessManager
             Console.WriteLine("Email Sended Successfully");
         }
 
+        #endregion
+
+        #region User Login
+        public Response UserLogin(string email, string password)
+        {
+            Response response = new Response();
+            using (VehiclesSystemEntities db = new VehiclesSystemEntities())
+            {
+                DB.User user = (from u in db.Users
+                                where u.Email == email 
+                                   && u.Password == password
+                                select u).FirstOrDefault();
+
+                if (user == null)
+                {
+                    response.Msg = "Account doesn't exist";
+                }
+                else
+                {
+                    response.Msg = "success";
+                    response.UserId = user.Id;
+                }
+                
+            }
+            return response;
+        }
         #endregion
 
         #region get all users
@@ -203,6 +232,7 @@ namespace VehiclesSystem.BusinessManager
             Response response = new Response();
             using (VehiclesSystemEntities db = new VehiclesSystemEntities())
             {
+                List<Models.Vehicle> NewVehicles = new List<Models.Vehicle>();
                 foreach (var item in db.Vehicles)
                 {
                     if (item.WaitingForApprove)
@@ -212,7 +242,8 @@ namespace VehiclesSystem.BusinessManager
                             VehicleId = item.Id,
                             PlateNumber = item.PlateNumber,
                             PlateModel = item.PlateModel,
-                            PlateColor = item.PlateColor
+                            PlateColor = item.PlateColor,
+                            WaitingForApprove = item.WaitingForApprove
                         };
                         if (item.PlateTextId != null)
                         {
@@ -220,10 +251,10 @@ namespace VehiclesSystem.BusinessManager
                                                  where p.Id == item.PlateTextId
                                                  select p.Text).FirstOrDefault();
                         }
-                        response.Vehicle.Add(vehicle);
+                        NewVehicles.Add(vehicle);
                     }
-
                 }
+                response.Vehicles = NewVehicles;
                 response.Msg = "success";
             }
             return response;

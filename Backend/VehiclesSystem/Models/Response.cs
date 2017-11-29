@@ -9,8 +9,9 @@ namespace VehiclesSystem.Models
     {
         public string Msg { get; set; }
         public int UserId { get; set; }
-        public List<User> Users = new List<User>();
-        public List<Vehicle> Vehicle = new List<Vehicle>();
+        public int VehicleId { get; set; }
+        public List<User> Users { get; set; }
+        public List<Vehicle> Vehicles { get; set; }
     }
 
     public class User
@@ -18,6 +19,7 @@ namespace VehiclesSystem.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        public string Password { get; set; }
         public byte Age { get; set; }
         public string MobileNumber { get; set; }
     }

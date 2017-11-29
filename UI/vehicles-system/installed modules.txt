@@ -1,2 +1,6 @@
 1- bootstrap
 npm install bootstrap@4.0.0-beta.2
+--------------------------------------
+2- jquery
+npm install jquery
+--------------------------------------

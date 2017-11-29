@@ -5,11 +5,11 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="de22c5647ea44e3b8b6447134cb2eb66" Name="Diagram1">
-        <EntityTypeShape EntityType="VehiclesSystemModel.PlateText" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="VehiclesSystemModel.User" Width="1.5" PointX="0.75" PointY="5.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="VehiclesSystemModel.Vehicle" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
-        <AssociationConnector Association="VehiclesSystemModel.FK_Vehicle_PlateText" ManuallyRouted="false" />
-        <AssociationConnector Association="VehiclesSystemModel.FK_Vehicle_User" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="VehiclesSystemModel.PlateText" Width="1.5" PointX="0.75" PointY="5.5" />
+        <EntityTypeShape EntityType="VehiclesSystemModel.User" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="VehiclesSystemModel.Vehicle" Width="1.5" PointX="3" PointY="1" />
+        <AssociationConnector Association="VehiclesSystemModel.FK_Vehicle_PlateText" />
+        <AssociationConnector Association="VehiclesSystemModel.FK_Vehicle_User" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
