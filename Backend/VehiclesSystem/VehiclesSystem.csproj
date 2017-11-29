@@ -127,13 +127,6 @@
       <LastGenOutput>DataModel.cs</LastGenOutput>
     </Content>
     <Content Include="Global.asax" />
-    <Content Include="UI\Libs\bootstrap\css\bootstrap.css" />
-    <Content Include="UI\Libs\bootstrap\js\bootstrap.js" />
-    <Content Include="UI\Libs\jquery-3.2.1.min.js" />
-    <Content Include="UI\Views\AddNewVehicle.html" />
-    <Content Include="UI\Views\Admin.html" />
-    <Content Include="UI\Views\index.html" />
-    <Content Include="UI\Views\RegisterUser.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -191,7 +184,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="UI\Scripts\" />
     <Folder Include="Views\User\" />
     <Folder Include="Views\vehicles\" />
   </ItemGroup>
