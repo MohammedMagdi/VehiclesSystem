@@ -16,19 +16,19 @@ namespace VehiclesSystem.BusinessManager
         {
             int? AGE = age;
             Response response = new Response();
-            if (firstName == "" || firstName == null)
+            if (string.IsNullOrEmpty(firstName))
             {
                 response.Msg = "fail, first name required";
             }
-            else if (lastName == "" || lastName == null)
+            else if (string.IsNullOrEmpty(lastName))
             {
                 response.Msg = "fail, last name required";
             }
-            else if (email == "" || email == null)
+            else if (string.IsNullOrEmpty(email))
             {
                 response.Msg = "fail, email required";
             }
-            else if (password == "" || password == null)
+            else if (string.IsNullOrEmpty(password))
             {
                 response.Msg = "fail, password required";
             }
@@ -36,7 +36,7 @@ namespace VehiclesSystem.BusinessManager
             {
                 response.Msg = "fail, aged required";
             }
-            else if (mobileNumber == "" || mobileNumber == null)
+            else if (string.IsNullOrEmpty(mobileNumber))
             {
                 response.Msg = "fail, mobile number required";
             }
@@ -100,18 +100,18 @@ namespace VehiclesSystem.BusinessManager
             {
                 response.Msg = "fail, plateNumber required";
             }
-            if (plateModel == "" || plateModel == null)
+            if (string.IsNullOrEmpty(plateModel))
             {
                 response.Msg = "fail, plateModel required";
             }
-            if (plateColor == "" || plateColor == null)
+            if (string.IsNullOrEmpty(plateColor))
             {
                 response.Msg = "fail, plateColor required";
             }
             int? USERID = userId;
             if (!USERID.HasValue)
             {
-                response.Msg = "fail, userId null";
+                response.Msg = "fail, login first to add vehicles";
             }
             else
             {
@@ -180,24 +180,36 @@ namespace VehiclesSystem.BusinessManager
         public Response UserLogin(string email, string password)
         {
             Response response = new Response();
-            using (VehiclesSystemEntities db = new VehiclesSystemEntities())
+            if (string.IsNullOrEmpty(email))
             {
-                DB.User user = (from u in db.Users
-                                where u.Email == email 
-                                   && u.Password == password
-                                select u).FirstOrDefault();
-
-                if (user == null)
-                {
-                    response.Msg = "Account doesn't exist";
-                }
-                else
-                {
-                    response.Msg = "success";
-                    response.UserId = user.Id;
-                }
-                
+                response.Msg = "fail, email required";
             }
+            else if (string.IsNullOrEmpty(password))
+            {
+                response.Msg = "fail, password required";
+            }
+            else
+            {
+                using (VehiclesSystemEntities db = new VehiclesSystemEntities())
+                {
+                    DB.User user = (from u in db.Users
+                                    where u.Email == email
+                                       && u.Password == password
+                                    select u).FirstOrDefault();
+
+                    if (user == null)
+                    {
+                        response.Msg = "Account doesn't exist";
+                    }
+                    else
+                    {
+                        response.Msg = "success";
+                        response.UserId = user.Id;
+                    }
+
+                }
+            }
+            
             return response;
         }
         #endregion
