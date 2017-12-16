@@ -151,7 +151,7 @@ class UserLogin extends Component {
         }
         return (
             <div>
-                <Navbar history={this.props.history} CurrentComponent="UserLogin" />
+                <Navbar history={this.props.history}  CurrentComponent="UserLogin" />
                 <div className="container " style={{marginTop : 60}}>
                     <div id="loginForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
                         <h2 className="form-signin-heading">Please sign in</h2>
