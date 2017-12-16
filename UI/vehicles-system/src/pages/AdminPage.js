@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import $ from "jquery";
+import DataModel from '../DataModel';
+import Navbar from './Navbar';
 
 class AdminPage extends Component {
     constructor(props) {
@@ -17,15 +19,14 @@ class AdminPage extends Component {
     }
     getNewVehicles() {
         var Message = '';
-        var BaseUrl = 'http://localhost:49949';
         var ThisComponent = this;
         $.ajax({
-            url: BaseUrl + '/vehicles/getNewVehicles',
+            url: DataModel.BaseUrl + '/vehicles/getNewVehicles',
             type: 'POST',
             dataType: "json",
             success: function (data, textStatus, xhr) {
                 if (data.Msg === "success") {
-                    if(data.Vehicles.length === 0){
+                    if (data.Vehicles.length === 0) {
                         Message = 'No new vehicles';
                     }
                     ThisComponent.setState({
@@ -57,13 +58,12 @@ class AdminPage extends Component {
             NewVehicles: NewData,
             ServerMsg: 'Loading...'
         });
-        var BaseUrl = 'http://localhost:49949';
         var URL = '';
         URL = isApproved ? 'approve' : 'reject';
         var ThisComponent = this;
         $(".btn").prop('disabled', true);
         $.ajax({
-            url: BaseUrl + '/vehicles/' + URL,
+            url: DataModel.BaseUrl + '/vehicles/' + URL,
             type: 'POST',
             data: model,
             dataType: "json",
@@ -129,11 +129,14 @@ class AdminPage extends Component {
     }
     render() {
         return (
-            <div className="container">
-                <div id="AdminForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
-                    <h2 >New Vehicles requests..</h2>
-                    {this.errorMessage()}
-                    {this.drawVehicles()}
+            <div>
+                <Navbar history={this.props.history} CurrentComponent="AdminPage" />
+                <div className="container " style={{ marginTop: 60 }}>
+                    <div id="AdminForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
+                        <h2 >New Vehicles requests..</h2>
+                        {this.errorMessage()}
+                        {this.drawVehicles()}
+                    </div>
                 </div>
             </div>
         );

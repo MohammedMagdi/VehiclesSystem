@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import $ from "jquery";
-import RegisterUser from './RegisterUser';
-import AdminPage from './AdminPage';
-import AddNewVehicle from './AddNewVehicle';
+import DataModel from '../DataModel';
+import Navbar from './Navbar';
 
 class UserLogin extends Component {
 
@@ -100,14 +98,13 @@ class UserLogin extends Component {
             , password: this.state.password
         };
 
-        
+
         this.setState({
             ServerMsg: 'Loading...'
         });
         var ThisComponent = this;
-        var BaseUrl = 'http://localhost:49949';
         $.ajax({
-            url: BaseUrl + '/users/login',
+            url: DataModel.BaseUrl + '/users/login',
             type: 'POST',
             dataType: "json",
             data: user,
@@ -116,7 +113,8 @@ class UserLogin extends Component {
                     ServerMsg: data.Msg
                 });
                 if (data.Msg === "success") {
-                    ReactDOM.render(<AddNewVehicle UserId={data.UserId} />, document.getElementById('root'));
+                    DataModel.UserId = data.UserId;
+                    this.props.history.push('/');
                 }
                 $("#btnsignin").prop('disabled', false);
             },
@@ -134,11 +132,11 @@ class UserLogin extends Component {
     }
     OpenRegister(e) {
         e.preventDefault();
-        ReactDOM.render(<RegisterUser />, document.getElementById('root'));
+        this.props.history.push('/register');
     }
     OpenAdmin(e) {
         e.preventDefault();
-        ReactDOM.render(<AdminPage />, document.getElementById('root'));
+        this.props.history.push('/admin');
     }
 
     //#region render
@@ -152,42 +150,45 @@ class UserLogin extends Component {
             );
         }
         return (
-            <div className="container ">
-                <div id="loginForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
-                    <h2 className="form-signin-heading">Please sign in</h2>
-                    {ServerMessage}
-                    <div className={`form-group row`}>
-                        <label className={`col-sm-3 col-form-label ${this.errorLabelClass(this.state.formErrors.email)}`} htmlFor="email">Email*</label>
-                        <div className="col-sm-6">
-                            <input type="email" autoFocus className={`form-control ${this.errorClass(this.state.formErrors.email)}`} name="email"
-                                placeholder="Email"
-                                value={this.state.email}
-                                onChange={this.handleUserInput} />
+            <div>
+                <Navbar history={this.props.history} CurrentComponent="UserLogin" />
+                <div className="container " style={{marginTop : 60}}>
+                    <div id="loginForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
+                        <h2 className="form-signin-heading">Please sign in</h2>
+                        {ServerMessage}
+                        <div className={`form-group row`}>
+                            <label className={`col-sm-3 col-form-label ${this.errorLabelClass(this.state.formErrors.email)}`} htmlFor="email">Email*</label>
+                            <div className="col-sm-6">
+                                <input type="email" autoFocus className={`form-control ${this.errorClass(this.state.formErrors.email)}`} name="email"
+                                    placeholder="Email"
+                                    value={this.state.email}
+                                    onChange={this.handleUserInput} />
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-danger">{this.errorMsg(this.state.formErrors.email)}</small>
+                            </div>
                         </div>
-                        <div className="col-sm-3">
-                            <small className="text-danger">{this.errorMsg(this.state.formErrors.email)}</small>
+                        <div className={`form-group row`}>
+                            <label className={`col-sm-3 col-form-label ${this.errorLabelClass(this.state.formErrors.password)}`} htmlFor="password">Password*</label>
+                            <div className="col-sm-6">
+                                <input type="password" className={`form-control ${this.errorClass(this.state.formErrors.password)}`} name="password"
+                                    placeholder="Password"
+                                    value={this.state.password}
+                                    onChange={this.handleUserInput} />
+                            </div>
+                            <div className="col-sm-3">
+                                <small className="text-danger">{this.errorMsg(this.state.formErrors.password)}</small>
+                            </div>
                         </div>
-                    </div>
-                    <div className={`form-group row`}>
-                        <label className={`col-sm-3 col-form-label ${this.errorLabelClass(this.state.formErrors.password)}`} htmlFor="password">Password*</label>
-                        <div className="col-sm-6">
-                            <input type="password" className={`form-control ${this.errorClass(this.state.formErrors.password)}`} name="password"
-                                placeholder="Password"
-                                value={this.state.password}
-                                onChange={this.handleUserInput} />
+                        <div style={{ textAlign: 'center' }}>
+                            <label onClick={this.OpenAdmin} ><a href="">Admin</a></label>
                         </div>
-                        <div className="col-sm-3">
-                            <small className="text-danger">{this.errorMsg(this.state.formErrors.password)}</small>
+                        <div style={{ textAlign: 'center' }}>
+                            <label onClick={this.OpenRegister} ><a href="">Register</a></label>
                         </div>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                        <label onClick={this.OpenAdmin} ><a href="">Admin</a></label>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                        <label onClick={this.OpenRegister} ><a href="">Register</a></label>
-                    </div>
-                    <button id="btnsignin" onClick={this.handleSubmit} type="submit" className="btn btn-lg btn-primary btn-block" disabled={!this.state.formValid}>Sign in</button>
+                        <button id="btnsignin" onClick={this.handleSubmit} type="submit" className="btn btn-lg btn-primary btn-block" disabled={!this.state.formValid}>Sign in</button>
 
+                    </div>
                 </div>
             </div>
         );

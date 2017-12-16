@@ -1,6 +1,13 @@
-1- bootstrap
+1- npm
+npm install
+--------------------------------------
+2- bootstrap
 npm install bootstrap@4.0.0-beta.2
 --------------------------------------
-2- jquery
+3- jquery
 npm install jquery
+--------------------------------------
+4- react-router-dom
+npm install react-router-dom
+npm install history
 --------------------------------------
