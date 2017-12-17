@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import $ from "jquery";
 import DataModel from '../DataModel';
-import Navbar from './Navbar';
+import StringsModel from '../resources/StringsModel';
+import CallService from '../service/CallService';
 
 class UserLogin extends Component {
 
@@ -22,6 +23,29 @@ class UserLogin extends Component {
         this.OpenRegister = this.OpenRegister.bind(this);
         this.OpenAdmin = this.OpenAdmin.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.CallbackSuccess = this.CallbackSuccess.bind(this);
+        this.CallbackError = this.CallbackError.bind(this);
+    }
+    componentWillMount() {
+        if (DataModel.UserId !== null) {
+            this.props.history.push(StringsModel.HomeUrl);
+        }
+    }
+    CallbackSuccess(data) {
+        this.setState({
+            ServerMsg: data.Msg
+        });
+        if (data.Msg === "success") {
+            DataModel.UserId = data.UserId;
+            this.props.history.push(StringsModel.HomeUrl);
+        }
+        $("#btnsignin").prop('disabled', false);
+    }
+    CallbackError() {
+        $("#btnsignin").prop('disabled', false);
+        this.setState({
+            ServerMsg: 'failed! connecting to service'
+        });
     }
     handleUserInput = (e) => {
         const name = e.target.name;
@@ -98,45 +122,19 @@ class UserLogin extends Component {
             , password: this.state.password
         };
 
-
         this.setState({
             ServerMsg: 'Loading...'
         });
-        var ThisComponent = this;
-        $.ajax({
-            url: DataModel.BaseUrl + '/users/login',
-            type: 'POST',
-            dataType: "json",
-            data: user,
-            success: function (data, textStatus, xhr) {
-                ThisComponent.setState({
-                    ServerMsg: data.Msg
-                });
-                if (data.Msg === "success") {
-                    DataModel.UserId = data.UserId;
-                    this.props.history.push('/');
-                }
-                $("#btnsignin").prop('disabled', false);
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                $("#btnsignin").prop('disabled', false);
-                ThisComponent.setState({
-                    ServerMsg: 'failed! connecting to service'
-                });
-                console.log(xhr);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
 
-        });
+        CallService(StringsModel.loginUserAPI, StringsModel.POST, user, this.CallbackSuccess, this.CallbackError);
     }
     OpenRegister(e) {
         e.preventDefault();
-        this.props.history.push('/register');
+        this.props.history.push(StringsModel.RegisterUrl);
     }
     OpenAdmin(e) {
         e.preventDefault();
-        this.props.history.push('/admin');
+        this.props.history.push(StringsModel.AdminUrl);
     }
 
     //#region render
@@ -151,8 +149,25 @@ class UserLogin extends Component {
         }
         return (
             <div>
-                <Navbar history={this.props.history}  CurrentComponent="UserLogin" />
-                <div className="container " style={{marginTop : 60}}>
+                <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                    <a className="navbar-brand" href="">Vehicles System</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon" />
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarCollapse">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item active">
+                                <a className="nav-link" href="">Home <span className="sr-only">(current)</span></a>
+                            </li>
+                        </ul>
+                        <form className="form-inline mt-2 mt-md-0">
+                            <button className="btn btn-outline-success my-2 my-sm-0" style={{ marginRight: 5 }} onClick={this.OpenRegister}>SignUp</button>
+                            <button className="btn btn-outline-success my-2 my-sm-0" onClick={this.OpenAdmin}>Admin</button>
+                        </form>
+                    </div>
+                </nav>
+
+                <div className="container " style={{ marginTop: 60 }}>
                     <div id="loginForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
                         <h2 className="form-signin-heading">Please sign in</h2>
                         {ServerMessage}

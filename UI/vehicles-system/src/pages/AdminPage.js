@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import $ from "jquery";
-import DataModel from '../DataModel';
-import Navbar from './Navbar';
+import StringsModel from '../resources/StringsModel';
+import CallService from '../service/CallService';
 
 class AdminPage extends Component {
     constructor(props) {
@@ -13,43 +13,70 @@ class AdminPage extends Component {
         this.getNewVehicles = this.getNewVehicles.bind(this);
         this.handleVehicleOperation = this.handleVehicleOperation.bind(this);
         this.drawVehicles = this.drawVehicles.bind(this);
+        this.OpenRegister = this.OpenRegister.bind(this);
+        this.OpenUserLogin = this.OpenUserLogin.bind(this);
+        this.getVehiclesCallbackSuccess = this.getVehiclesCallbackSuccess.bind(this);
+        this.getVehiclesCallbackError = this.getVehiclesCallbackError.bind(this);
+        this.ApproveOrRejectCallbackSuccess = this.ApproveOrRejectCallbackSuccess.bind(this);
+        this.ApproveOrRejectCallbackError = this.ApproveOrRejectCallbackError.bind(this);
+
     }
+    getVehiclesCallbackSuccess(data) {
+        var Message = '';
+        if (data.Msg === "success") {
+            if (data.Vehicles.length === 0) {
+                Message = 'No new vehicles';
+            }
+            this.setState({
+                NewVehicles: data.Vehicles,
+                ServerMsg: Message
+            });
+        }
+        else {
+            this.setState({
+                ServerMsg: data.Msg
+            });
+        }
+    }
+    getVehiclesCallbackError() {
+        this.setState({
+            ServerMsg: 'failed! connecting to service'
+        });
+    }
+    ApproveOrRejectCallbackSuccess(data, VehicleIndex) {
+        var NewData = this.state.NewVehicles;
+        if (data.Msg === "success") {
+            NewData.splice(VehicleIndex, 1);
+        }
+        this.setState({
+            NewVehicles: NewData,
+            ServerMsg: data.Msg
+        });
+        $(".btn").prop('disabled', false);
+    }
+    ApproveOrRejectCallbackError() {
+        var NewData = this.state.NewVehicles;
+        this.setState({
+            NewVehicles: NewData,
+            ServerMsg: 'failed! connecting to service'
+        });
+        $(".btn").prop('disabled', false);
+    }
+
     componentDidMount() {
         this.getNewVehicles();
     }
+    OpenRegister(e) {
+        e.preventDefault();
+        this.props.history.push(StringsModel.RegisterUrl);
+    }
+    OpenUserLogin(e) {
+        e.preventDefault();
+        this.props.history.push(StringsModel.LoginUrl);
+    }
     getNewVehicles() {
-        var Message = '';
-        var ThisComponent = this;
-        $.ajax({
-            url: DataModel.BaseUrl + '/vehicles/getNewVehicles',
-            type: 'POST',
-            dataType: "json",
-            success: function (data, textStatus, xhr) {
-                if (data.Msg === "success") {
-                    if (data.Vehicles.length === 0) {
-                        Message = 'No new vehicles';
-                    }
-                    ThisComponent.setState({
-                        NewVehicles: data.Vehicles,
-                        ServerMsg: Message
-                    });
-                }
-                else {
-                    ThisComponent.setState({
-                        ServerMsg: data.Msg
-                    });
-                }
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                ThisComponent.setState({
-                    ServerMsg: 'failed! connecting to service'
-                });
-                console.log(xhr);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
-
-        });
+        var model = {};
+        CallService(StringsModel.getNewVehiclesAPI, StringsModel.POST, model, this.getVehiclesCallbackSuccess, this.getVehiclesCallbackError);
     }
     handleVehicleOperation(id, index, isApproved) {
         var model = { VehicleId: id };
@@ -59,36 +86,11 @@ class AdminPage extends Component {
             ServerMsg: 'Loading...'
         });
         var URL = '';
-        URL = isApproved ? 'approve' : 'reject';
-        var ThisComponent = this;
+        URL = isApproved ? StringsModel.approveVehicleAPI : StringsModel.regictVehicleAPI;
         $(".btn").prop('disabled', true);
-        $.ajax({
-            url: DataModel.BaseUrl + '/vehicles/' + URL,
-            type: 'POST',
-            data: model,
-            dataType: "json",
-            success: function (data, textStatus, xhr) {
-                if (data.Msg === "success") {
-                    NewData.splice(index, 1);
-                }
-                ThisComponent.setState({
-                    NewVehicles: NewData,
-                    ServerMsg: data.Msg
-                });
-                $(".btn").prop('disabled', false);
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                ThisComponent.setState({
-                    NewVehicles: NewData,
-                    ServerMsg: 'failed! connecting to service'
-                });
-                $(".btn").prop('disabled', false);
-                console.log(xhr);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
 
-        });
+        CallService(URL, StringsModel.POST, model, this.ApproveOrRejectCallbackSuccess, this.ApproveOrRejectCallbackError, index);
+
     }
     drawVehicles() {
         let Result = '';
@@ -130,7 +132,24 @@ class AdminPage extends Component {
     render() {
         return (
             <div>
-                <Navbar history={this.props.history} CurrentComponent="AdminPage" />
+                <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                    <a className="navbar-brand" href="">Admin</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon" />
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarCollapse">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item active">
+                                <a className="nav-link" href="">Home <span className="sr-only">(current)</span></a>
+                            </li>
+                        </ul>
+                        <form className="form-inline mt-2 mt-md-0">
+                            <button className="btn btn-outline-success my-2 my-sm-0" style={{ marginRight: 5 }} onClick={this.OpenUserLogin}>Login</button>
+                            <button className="btn btn-outline-success my-2 my-sm-0" onClick={this.OpenRegister}>SignUp</button>
+                        </form>
+                    </div>
+                </nav>
+
                 <div className="container " style={{ marginTop: 60 }}>
                     <div id="AdminForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
                         <h2 >New Vehicles requests..</h2>

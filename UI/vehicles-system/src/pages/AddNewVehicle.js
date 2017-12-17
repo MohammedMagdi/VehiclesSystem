@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import $ from "jquery";
 import DataModel from '../DataModel';
-import Navbar from './Navbar';
+import StringsModel from '../resources/StringsModel';
+import CallService from '../service/CallService';
 
 class AddNewVehicle extends Component {
 
@@ -27,11 +28,39 @@ class AddNewVehicle extends Component {
         }
 
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleSignOut = this.handleSignOut.bind(this);
+        this.OpenAdmin = this.OpenAdmin.bind(this);
+        this.LogOut = this.LogOut.bind(this);
+        this.CallbackSuccess = this.CallbackSuccess.bind(this);
+        this.CallbackError = this.CallbackError.bind(this);
     }
-
-    handleSignOut(e) {
-        alert("ok")
+    componentWillMount() {
+        if (DataModel.UserId === null) {
+            this.props.history.push(StringsModel.LoginUrl);
+        }
+    }
+    CallbackSuccess(data) {
+        this.setState({
+            ServerMsg: data.Msg
+        });
+        if (data.Msg === "success") {
+            //
+        }
+        $("#submitVehicle").prop('disabled', false);
+    }
+    CallbackError() {
+        $("#submitVehicle").prop('disabled', false);
+        this.setState({
+            ServerMsg: 'failed! connecting to service'
+        });
+    }
+    
+    LogOut(e) {
+        DataModel.UserId = null;
+        this.props.history.replace(StringsModel.LoginUrl);
+    }
+    OpenAdmin(e) {
+        e.preventDefault();
+        this.props.history.push(StringsModel.AdminUrl);
     }
     handleUserInput = (e) => {
         const name = e.target.name;
@@ -147,32 +176,9 @@ class AddNewVehicle extends Component {
         this.setState({
             ServerMsg: ''
         });
-        var ThisComponent = this;
-        $.ajax({
-            url: DataModel.BaseUrl + '/vehicles/addnew',
-            type: 'POST',
-            dataType: "json",
-            data: model,
-            success: function (data, textStatus, xhr) {
-                ThisComponent.setState({
-                    ServerMsg: data.Msg
-                });
-                if (data.Msg === "success") {
-                    //
-                }
-                $("#submitVehicle").prop('disabled', false);
-            },
-            error: function (xhr, textStatus, errorThrown) {
-                $("#submitVehicle").prop('disabled', false);
-                ThisComponent.setState({
-                    ServerMsg: 'failed! connecting to service'
-                });
-                console.log(xhr);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
 
-        });
+        CallService(StringsModel.AddNewVehicleAPi, StringsModel.POST, model, this.CallbackSuccess , this.CallbackError);
+
     }
 
 
@@ -180,35 +186,46 @@ class AddNewVehicle extends Component {
     render() {
         let ServerMessage = '';
         var classMsg = '';
-        if (DataModel.UserId === null) {
-            this.props.history.push('/login');
-        }
-        else {
-            if (this.state.ServerMsg.length !== 0) {
-                if (this.state.ServerMsg === 'success') {
-                    classMsg = 'text-success';
-                }
-                else {
-                    classMsg = 'text-danger';
-                }
-                ServerMessage = (
-                    <div className="panel panel-default">
-                        <small className={classMsg}>{this.state.ServerMsg}</small>
-                    </div>
-                );
-            }
-
-            if (this.state.isPlateText === 'no') {
-                $("#plateTextInput").prop('disabled', true);
+        if (this.state.ServerMsg.length !== 0) {
+            if (this.state.ServerMsg === 'success') {
+                classMsg = 'text-success';
             }
             else {
-                $("#plateTextInput").prop('disabled', false);
+                classMsg = 'text-danger';
             }
+            ServerMessage = (
+                <div className="panel panel-default">
+                    <small className={classMsg}>{this.state.ServerMsg}</small>
+                </div>
+            );
         }
 
+        if (this.state.isPlateText === 'no') {
+            $("#plateTextInput").prop('disabled', true);
+        }
+        else {
+            $("#plateTextInput").prop('disabled', false);
+        }
         return (
             <div>
-                <Navbar history={this.props.history} CurrentComponent="AddNewVehicle" />
+                <nav className="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                    <a className="navbar-brand" href="">Vehicles System</a>
+                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon" />
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarCollapse">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item active">
+                                <a className="nav-link" href="">Home <span className="sr-only">(current)</span></a>
+                            </li>
+                        </ul>
+                        <form className="form-inline mt-2 mt-md-0">
+                            <button className="btn btn-outline-danger my-2 my-sm-0" style={{ marginRight: 5 }} onClick={this.LogOut}>Logout</button>
+                            <button className="btn btn-outline-success my-2 my-sm-0" onClick={this.OpenAdmin}>Admin</button>
+                        </form>
+                    </div>
+                </nav>
+
                 <div className="container " style={{ marginTop: 60 }}>
                     <div id="registerForm" style={{ maxWidth: 800, padding: 15, margin: '0 auto' }}>
                         <h2 className="form-signin-heading">Vehicle detailes</h2>
@@ -273,7 +290,7 @@ class AddNewVehicle extends Component {
                         </div>
                         <button id="submitVehicle" onClick={this.handleSubmit} type="submit" className="btn btn-lg btn-primary btn-block" disabled={!this.state.formValid}>Submit</button>
                         <div style={{ textAlign: 'center', marginTop: 10 }}>
-                            <button type="button" className="btn btn-danger" onClick={e => this.handleSignOut()}>Sign Out</button>
+                            <button type="button" className="btn btn-danger" onClick={e => this.LogOut()}>Sign Out</button>
                         </div>
                     </div>
                 </div>
